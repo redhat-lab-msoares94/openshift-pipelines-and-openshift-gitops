@@ -4,7 +4,7 @@ pipelinesv2:
     pipeName: netcore-sample
     appSourceGit: 'redhat-lab-msoares94/netcore-sample'
     appSourceBranch: 'main'
-    appManifestGit: 'redhat-lab-msoares94/netcore-sample-gitops'
+    appManifestGit: 'redhat-lab-msoares94/source-demo/netcore-sample-gitops'
     appManifestGitBranch: 'dev'
     appManifestPath: '.'
     gitHashCommit: '1.0.0'
@@ -14,7 +14,7 @@ pipeMoveImage:
   - projectToName: apps-hml
     projectFromName: apps-dev
     pipeName: netcore-sample-move
-    appManifestGit: 'redhat-lab-msoares94/netcore-sample-gitops'
+    appManifestGit: 'redhat-lab-msoares94/source-demo/netcore-sample-gitops'
     appManifestGitBranch: 'hml'
     appManifestPath: '.'
     gitHashCommit: '1.0.0'
