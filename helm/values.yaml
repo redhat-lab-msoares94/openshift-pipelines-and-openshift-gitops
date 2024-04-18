@@ -23,7 +23,7 @@ pipeMoveImage:
   - projectToName: apps-prd
     projectFromName: apps-hml
     pipeName: netcore-sample-move
-    appManifestGit: 'redhat-lab-msoares94/netcore-sample-gitops'
+    appManifestGit: 'redhat-lab-msoares94/source-demo/netcore-sample-gitops'
     appManifestGitBranch: 'prd'
     appManifestPath: '.'
     gitHashCommit: '1.0.0'
