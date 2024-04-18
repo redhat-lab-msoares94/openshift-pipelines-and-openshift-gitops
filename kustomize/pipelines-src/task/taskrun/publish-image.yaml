@@ -1,0 +1,20 @@
+apiVersion: tekton.dev/v1beta1
+kind: TaskRun
+metadata:
+  generateName: publish-image-
+spec:
+  taskRef:
+    kind: ClusterTask
+    name: skopeo-copy
+  params:
+  - name: srcImageURL
+    value: docker://image-registry.openshift-image-registry.svc:5000/hello-spring-dev/hello-service:prod-${IMAGE_TAG}
+  - name: srcTLSverify
+    value: "false"
+  - name: destImageURL
+    value: docker://nexus-registry.nexus.svc:5000/hello-service:prod-${IMAGE_TAG}
+  - name: destTLSverify
+    value: "false"
+  workspaces:
+  - name: images-url
+    emptyDir: {}

@@ -1,0 +1,33 @@
+{{ if .Values.pipelinesv2 }}
+{{ range $pipeline := .Values.pipelinesv2 }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: git-auth-{{ $pipeline.pipeName }}
+  namespace: {{ $pipeline.projectOcName }}
+  annotations:
+    tekton.dev/git-0: https://gitlab.consulting.redhat.com # Described below
+type: kubernetes.io/basic-auth
+stringData:
+  username: glpat-dRwQV4t_zZYzJAsxSDxs
+  password: glpat-dRwQV4t_zZYzJAsxSDxs
+{{ end }}
+{{ end }}
+
+{{ if .Values.pipeMoveImage }}
+{{ range $pipeline := .Values.pipeMoveImage }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: git-auth-{{ $pipeline.pipeName }}
+  namespace: {{ $pipeline.projectToName }}
+  annotations:
+    tekton.dev/git-0: https://gitlab.consulting.redhat.com # Described below
+type: kubernetes.io/basic-auth
+stringData:
+  username: glpat-dRwQV4t_zZYzJAsxSDxs
+  password: glpat-dRwQV4t_zZYzJAsxSDxs
+{{ end }}
+{{ end }}

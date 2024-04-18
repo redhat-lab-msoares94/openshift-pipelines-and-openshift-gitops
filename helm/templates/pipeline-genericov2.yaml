@@ -1,0 +1,146 @@
+{{ if .Values.pipelinesv2 }}
+{{ range $pipeline := .Values.pipelinesv2 }}
+---
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: pipeline-{{ $pipeline.pipeName }}
+  namespace: {{ $pipeline.projectOcName }}
+spec:
+  params:
+    - default: git-auth-{{ $pipeline.pipeName }}
+      name: GIT_SECRET
+      type: string
+    - name: GIT_HOST
+      description: The git repository host
+      type: string
+      default: {{ $pipeline.gitHost }}
+    - default: https
+      name: GIT_PROTOCOL
+      type: string      
+    - name: APP_SOURCE_GIT
+      description: The application git repository      
+      type: string
+      default: {{ $pipeline.appSourceGit }}
+    - name: APP_SOURCE_BRANCH
+      type: string         
+      default: {{ $pipeline.appSourceBranch }}       
+    - name: APP_MANIFESTS_GIT      
+      type: string
+      default: {{ $pipeline.appManifestGit }}       
+    - name: APP_MANIFESTS_GIT_BRANCH      
+      type: string
+      default: {{ $pipeline.appManifestGitBranch }}       
+    - default: {{ $pipeline.appManifestPath }}
+      description: The application manifests git repository path
+      name: APP_MANIFESTS_PATH
+      type: string
+    - default: {{ $pipeline.projectOcName }}
+      description: The pipelines project runs
+      name: PROJECT_OC_NAME
+      type: string
+    - name: GIT_HASH_COMMIT
+      type: string
+      description: The application image tag to build
+      default: {{ $pipeline.gitHashCommit }}
+  results:
+    - description: The image digest built in the pipeline
+      name: APP_NAMESPACE
+      value: $(tasks.set-namespace.results.ns)
+    - description: The name of branch handled
+      name: APP_NAME
+      value: $(tasks.app-name.results.app_name)        
+  tasks:
+    - name: source-clone
+      params:
+        - name: GIT_HOST
+          value: $(params.GIT_HOST)
+        - name: GIT_PROTOCOL
+          value: $(params.GIT_PROTOCOL)
+        - name: GIT_PATH
+          value: "$(params.APP_SOURCE_GIT)"
+        - name: GIT_SOURCE_BRANCH
+          value: "$(params.APP_SOURCE_BRANCH)"
+        - name: git-secret-name
+          value: $(params.GIT_SECRET)
+      taskRef:
+        kind: ClusterTask
+        name: git-clonev2
+      workspaces:
+        - name: workspace
+          workspace: workspace
+    - name: set-namespace
+      params:
+        - name: PROJECT_OC_NAME
+          value: $(params.PROJECT_OC_NAME)
+      runAfter:
+        - source-clone 
+      taskRef:
+        kind: ClusterTask
+        name: set-build-namespace             
+    - name: app-name
+      params:               
+        - name: GIT_HOST
+          value: $(params.GIT_HOST)
+        - name: GIT_PROTOCOL
+          value: $(params.GIT_PROTOCOL)
+        - name: GIT_PATH
+          value: $(params.APP_MANIFESTS_GIT)  
+        - name: SOURCE_BRANCH
+          value: $(params.APP_MANIFESTS_GIT_BRANCH)
+        - name: SOURCE_FOLDER
+          value: $(params.APP_MANIFESTS_PATH)  
+        - name: git-secret-name
+          value: $(params.GIT_SECRET)
+      runAfter:
+        - set-namespace
+      taskRef:
+        kind: ClusterTask
+        name: set-app-name
+      workspaces:
+        - name: workspace
+          workspace: workspace  
+    - name: build-image
+      params:
+        - name: TLSVERIFY
+          value: 'false'
+        - name: IMAGE
+          value: >-
+             image-registry.openshift-image-registry.svc:5000/$(tasks.set-namespace.results.ns)/$(tasks.app-name.results.app_name):$(params.GIT_HASH_COMMIT)
+      runAfter:
+        - app-name
+      taskRef:
+        kind: ClusterTask
+        name: buildah
+      workspaces:
+        - name: source
+          workspace: workspace
+
+    - name: update-deployment
+      params:
+        - name: GIT_HOST
+          value: $(params.GIT_HOST)
+        - name: GIT_PROTOCOL
+          value: $(params.GIT_PROTOCOL)
+        - name: GIT_PATH
+          value: $(params.APP_MANIFESTS_GIT)  
+        - name: APP_MANIFESTS_PATH
+          value: $(params.APP_MANIFESTS_PATH)
+        - name: GIT_HASH_COMMIT
+          value: $(params.GIT_HASH_COMMIT)      
+        - name: SOURCE_BRANCH
+          value: $(params.APP_MANIFESTS_GIT_BRANCH)  
+        - name: git-secret-name
+          value: $(params.GIT_SECRET)
+      runAfter:
+        - build-image
+      taskRef:
+        kind: ClusterTask
+        name: git-update-deployment
+      workspaces:
+        - name: workspace
+          workspace: workspace  
+  workspaces:
+    - name: workspace
+{{ end }}
+{{ end }}    

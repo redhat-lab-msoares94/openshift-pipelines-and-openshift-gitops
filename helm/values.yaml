@@ -1,0 +1,30 @@
+cicdNamespace: cicd
+pipelinesv2: 
+  - projectOcName: apps-dev
+    pipeName: netcore-sample
+    appSourceGit: 'redhat-lab-msoares94/netcore-sample'
+    appSourceBranch: 'main'
+    appManifestGit: 'redhat-lab-msoares94/netcore-sample-gitops'
+    appManifestGitBranch: 'dev'
+    appManifestPath: '.'
+    gitHashCommit: '1.0.0'
+    gitHost: 'github.com'
+
+pipeMoveImage: 
+  - projectToName: apps-hml
+    projectFromName: apps-dev
+    pipeName: netcore-sample-move
+    appManifestGit: 'redhat-lab-msoares94/netcore-sample-gitops'
+    appManifestGitBranch: 'hml'
+    appManifestPath: '.'
+    gitHashCommit: '1.0.0'
+    gitHost: 'github.com'
+
+  - projectToName: apps-prd
+    projectFromName: apps-hml
+    pipeName: netcore-sample-move
+    appManifestGit: 'redhat-lab-msoares94/netcore-sample-gitops'
+    appManifestGitBranch: 'prd'
+    appManifestPath: '.'
+    gitHashCommit: '1.0.0'
+    gitHost: 'github.com'
