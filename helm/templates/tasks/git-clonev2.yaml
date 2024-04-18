@@ -1,0 +1,80 @@
+{{ if .Values.cicdNamespace }}
+---
+apiVersion: tekton.dev/v1beta1
+kind: ClusterTask
+metadata:
+  annotations:
+    tekton.dev/pipelines.minVersion: 0.12.1
+    tekton.dev/tags: git  
+  name: git-clonev2
+  namespace: {{ $.Values.cicdNamespace }}
+  labels:
+    app.kubernetes.io/version: '0.1'
+    operator.tekton.dev/provider-type: community
+spec:
+  description: This Task clone repo
+  params:
+    - name: GIT_PROTOCOL
+      type: string
+    - name: GIT_HOST
+      type: string
+    - name: GIT_PATH     
+      type: string
+    - name: GIT_SOURCE_BRANCH
+      type: string
+    - name: git-secret-name
+      type: string
+  results:
+    - description: Application name
+      name: git-clonev2
+  steps:      
+    - image: 'registry.redhat.io/openshift-pipelines/pipelines-git-init-rhel8@sha256:c4b2183f7c7997bd401d86b33eefb637b3ef2fa90618e875106292cd69a15c14'
+      name: git-clone-source-repo
+      env:
+        - name: GIT_TOKEN
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: $(params.git-secret-name)
+        - name: GIT_USER
+          valueFrom:
+            secretKeyRef:
+              key: username
+              name: $(params.git-secret-name)
+      resources: {}
+      script: |
+        git config --global user.email "tekton@pipeline.com"
+        git config --global user.name "$GIT_USER"
+
+        CHECKOUT_DIR="/workspace/workspace"
+
+        cleandir() {
+          # Delete any existing contents of the repo directory if it exists.
+          #
+          # We don't just "rm -rf ${CHECKOUT_DIR}" because ${CHECKOUT_DIR} might be "/"
+          # or the root of a mounted volume.
+          if [ -d "${CHECKOUT_DIR}" ] ; then
+            # Delete non-hidden files and directories
+            rm -rf "${CHECKOUT_DIR:?}"/*
+            # Delete files and directories starting with . but excluding ..
+            rm -rf "${CHECKOUT_DIR}"/.[!.]*
+            # Delete files and directories starting with .. plus any other character
+            rm -rf "${CHECKOUT_DIR}"/..?*
+          fi
+        }
+
+        cleandir
+
+        git config --global --add safe.directory $CHECKOUT_DIR
+
+        git clone -b $(params.GIT_SOURCE_BRANCH) $(params.GIT_PROTOCOL)://$GIT_USER:$GIT_TOKEN@$(params.GIT_HOST)/$(params.GIT_PATH).git $CHECKOUT_DIR 
+
+        cd $CHECKOUT_DIR
+
+        ls -la
+        pwd
+        
+  workspaces:
+    - description: The workspace consisting project.
+      name: workspace 
+{{ end }}

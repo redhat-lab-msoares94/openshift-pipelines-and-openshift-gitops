@@ -1,0 +1,9 @@
+apiVersion: tekton.dev/v1beta1
+kind: TaskRun
+metadata:
+  generateName: generate-tag-
+spec:
+  serviceAccountName: pipeline
+  taskRef:
+    kind: Task
+    name: generate-tag

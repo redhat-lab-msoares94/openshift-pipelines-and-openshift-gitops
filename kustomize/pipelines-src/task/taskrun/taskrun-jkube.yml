@@ -1,0 +1,30 @@
+apiVersion: tekton.dev/v1beta1
+kind: TaskRun
+metadata:
+  generateName: maven-build-
+spec:
+  taskRef:
+    kind: ClusterTask
+    name: maven
+  params:
+  - name: MAVEN_IMAGE
+    value: registry.access.redhat.com/ubi8/openjdk-11:1.3
+  - name: CONTEXT_DIR
+    value: hello-service
+  - name: GOALS
+    value:
+    - package
+    - oc:build
+    - -Djkube.namespace=spring-test
+  - name: MAVEN_MIRROR_URL
+    value: http://nexusrepo-sonatype-nexus-service.nexus.svc:8081/repository/maven-all-public
+  - name: SERVER_USER
+    value: admin
+  - name: SERVER_PASSWORD
+    value: admin123
+  workspaces:
+  - name: source
+    persistentVolumeClaim:
+      claimName: workspace-pvc
+  - name: maven-settings
+    emptyDir: {}

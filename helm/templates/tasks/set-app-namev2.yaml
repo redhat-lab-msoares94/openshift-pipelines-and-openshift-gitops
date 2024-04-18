@@ -1,0 +1,72 @@
+{{ if .Values.cicdNamespace }}
+---
+apiVersion: tekton.dev/v1beta1
+kind: ClusterTask
+metadata:
+  annotations:
+    tekton.dev/pipelines.minVersion: 0.12.1
+    tekton.dev/tags: git  
+  name: set-app-name
+  namespace: {{ $.Values.cicdNamespace }}
+  labels:
+    app.kubernetes.io/version: '0.1'
+    operator.tekton.dev/provider-type: community
+spec:
+  description: This Task get app name from deployment file.
+  params:
+    - name: GIT_PROTOCOL
+      type: string
+    - name: GIT_HOST
+      type: string
+    - name: GIT_PATH     
+      type: string
+    - name: SOURCE_BRANCH     
+      type: string
+    - name: SOURCE_FOLDER     
+      type: string  
+    - name: git-secret-name
+      type: string
+  results:
+    - description: Application name
+      name: app_name
+  steps:      
+    - image: 'registry.redhat.io/openshift-pipelines/pipelines-git-init-rhel8@sha256:c4b2183f7c7997bd401d86b33eefb637b3ef2fa90618e875106292cd69a15c14'
+      name: git-clone-config-repo
+      env:
+        - name: GIT_TOKEN
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: $(params.git-secret-name)
+        - name: GIT_USER
+          valueFrom:
+            secretKeyRef:
+              key: username
+              name: $(params.git-secret-name)
+      resources: {}
+      script: |
+        
+        rm -fr git-update-tag-workdir
+        git config --global user.email "tekton@pipeline.com"
+        git config --global user.name "$GIT_USER"
+        git config --global http.sslVerify false
+
+        git clone -b $(params.SOURCE_BRANCH) $(params.GIT_PROTOCOL)://$GIT_USER:$GIT_TOKEN@$(params.GIT_HOST)/$(params.GIT_PATH).git git-update-tag-workdir
+        
+      workingDir: $(workspaces.workspace.path)
+    - image: alpine    
+      name: get-app-name
+      resources: {}
+      script: |   
+        cd git-update-tag-workdir
+        cd $(params.SOURCE_FOLDER)
+
+        DEPLOY_FILE=$(grep "config-file" * |awk -F":" '{print $1}')
+        echo -n $(grep -i "  deploymentName:" $DEPLOY_FILE |head -n1|awk -F":" '{print $2}') > $(results.app_name.path)
+        
+      workingDir: $(workspaces.workspace.path)
+      
+  workspaces:
+    - description: The workspace consisting of maven project.
+      name: workspace 
+{{ end }}

@@ -1,0 +1,96 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: hello-service-spring-dev-ci
+  namespace: spring-pipeline
+spec:
+  params:
+    - default: hello-service
+      name: SOURCE_GIT_CONTEXT_DIR
+      type: string
+    - default: hello-service-dev
+      description: The application name
+      name: APP_NAME
+      type: string
+    - description: Namespace where the buildconfig will be or is located
+      name: NAMESPACE
+      type: string
+    - default: >-
+        http://example-nexusrepo-sonatype-nexus-service.nexus.svc.cluster.local:8081/repository/maven-public/
+      description: Maven mirror for Maven Builds
+      name: MAVEN_MIRROR_URL
+      type: string
+  tasks:
+    - name: git-clone
+      params:
+        - name: url
+          value: 'https://github.com/msoares94/openshift-pipeline-tekton-and-openshift-gitops'
+        - name: revision
+          value: main
+        - name: submodules
+          value: 'true'
+        - name: depth
+          value: '1'
+        - name: sslVerify
+          value: 'true'
+        - name: deleteExisting
+          value: 'true'
+        - name: verbose
+          value: 'true'
+        - name: gitInitImage
+          value: >-
+            registry.redhat.io/openshift-pipelines/pipelines-git-init-rhel8@sha256:da1aedf0b17f2b9dd2a46edc93ff1c0582989414b902a28cd79bad8a035c9ea4
+        - name: userHome
+          value: /tekton/home
+      taskRef:
+        kind: ClusterTask
+        name: git-clone
+      workspaces:
+        - name: output
+          workspace: output
+    - name: generate-tag
+      taskRef:
+        kind: Task
+        name: generate-tag
+    - name: jkube-build
+      params:
+        - name: MAVEN_IMAGE
+          value: 'registry.access.redhat.com/ubi8/openjdk-11:1.3'
+        - name: CONTEXT_DIR
+          value: ./$(params.SOURCE_GIT_CONTEXT_DIR)
+        - name: GOALS
+          value:
+            - package
+            - 'oc:build'
+            - '-Djkube.namespace=$(params.NAMESPACE)'
+            - '-Djkube.generator.name=$(params.APP_NAME)'
+        - name: MAVEN_MIRROR_URL
+          value: $(params.MAVEN_MIRROR_URL)
+      runAfter:
+        - git-clone
+        - generate-tag
+      taskRef:
+        kind: ClusterTask
+        name: maven
+      workspaces:
+        - name: source
+          workspace: app-source
+        - name: maven-settings
+          workspace: maven-settings
+    - name: oc-tag-image-for-dev
+      params:
+        - name: SCRIPT
+          value: >-
+            oc tag $(params.NAMESPACE)/$(params.APP_NAME):latest
+            $(params.NAMESPACE)/$(params.APP_NAME):dev-$(tasks.generate-tag.results.image-tag)
+        - name: VERSION
+          value: latest
+      runAfter:
+        - jkube-build
+      taskRef:
+        kind: ClusterTask
+        name: openshift-client
+  workspaces:
+    - name: output
+    - name: maven-settings
+    - name: app-source

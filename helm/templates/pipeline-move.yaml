@@ -1,0 +1,91 @@
+{{ if .Values.pipeMoveImage }}
+{{ range $pipeline := .Values.pipeMoveImage }}
+---
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: pipeline-generico-{{ $pipeline.pipeName }}
+  namespace: {{ $pipeline.projectToName }}
+spec:
+  params:
+    - default: git-auth-{{ $pipeline.pipeName }}
+      name: GIT_SECRET
+      type: string
+    - name: GIT_HOST
+      description: The git repository host
+      type: string
+      default: {{ $pipeline.gitHost }}
+    - default: https
+      name: GIT_PROTOCOL
+      type: string      
+    - name: APP_MANIFESTS_GIT      
+      type: string
+      default: {{ $pipeline.appManifestGit }}       
+    - name: APP_MANIFESTS_GIT_BRANCH      
+      type: string
+      default: {{ $pipeline.appManifestGitBranch }}       
+    - default: {{ $pipeline.appManifestPath }}
+      description: The application manifests git repository path
+      name: APP_MANIFESTS_PATH
+      type: string
+    - default: {{ $pipeline.projectFromName }}
+      description: The origin namespace
+      name: PROJECT_OC_FROM_NAME
+      type: string
+    - default: {{ $pipeline.projectToName }}
+      description: The origin namespace
+      name: PROJECT_OC_TO_NAME
+      type: string
+    - name: GIT_HASH_COMMIT
+      type: string
+      description: The application image tag to build
+      default: {{ $pipeline.gitHashCommit }}
+  results: 
+    - description: Application name
+      name: APP_NAME
+      value: $(tasks.update-deployment.results.app_name)
+  tasks:
+    - name: update-deployment
+      params:
+        - name: GIT_HOST
+          value: $(params.GIT_HOST)
+        - name: GIT_PROTOCOL
+          value: $(params.GIT_PROTOCOL)
+        - name: GIT_PATH
+          value: $(params.APP_MANIFESTS_GIT)  
+        - name: APP_MANIFESTS_PATH
+          value: $(params.APP_MANIFESTS_PATH)
+        - name: GIT_HASH_COMMIT
+          value: $(params.GIT_HASH_COMMIT)      
+        - name: SOURCE_BRANCH
+          value: $(params.APP_MANIFESTS_GIT_BRANCH)  
+        - name: git-secret-name
+          value: $(params.GIT_SECRET)
+      taskRef:
+        kind: ClusterTask
+        name: git-update-deployment-move
+      workspaces:
+        - name: workspace
+          workspace: workspace  
+    - name: skopeo-copy
+      params:
+      - name: srcTLSverify
+        value: "false"
+      - name: destTLSverify
+        value: "false"
+      - name: srcImageURL
+        value: docker://image-registry.openshift-image-registry.svc:5000/$(params.PROJECT_OC_FROM_NAME)/$(tasks.update-deployment.results.app_name):$(params.GIT_HASH_COMMIT)
+      - name: destImageURL
+        value: docker://image-registry.openshift-image-registry.svc:5000/$(params.PROJECT_OC_TO_NAME)/$(tasks.update-deployment.results.app_name):$(params.GIT_HASH_COMMIT)
+      runAfter:
+      - update-deployment
+      taskRef:
+        kind: ClusterTask
+        name: skopeo-copy
+      workspaces:
+      - name: images-url
+        workspace: workspace          
+  workspaces:
+    - name: workspace
+{{ end }}
+{{ end }}    

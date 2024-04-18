@@ -1,0 +1,11 @@
+= Deploying the SonarQube
+
+For deploying the sonarqube we'll use the sonarqube template
+
+oc create -f https://github.com/rafamqrs/demo-pipeline-tkn/sonarqube/sonarqube-template.yaml
+
+oc get template
+
+oc new-app --template=sonarqube
+
+oc get pods

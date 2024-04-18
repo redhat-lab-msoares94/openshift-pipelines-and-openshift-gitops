@@ -1,0 +1,51 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  annotations:
+    tekton.dev/categories: Security
+    tekton.dev/displayName: sonarqube scanner
+    tekton.dev/pipelines.minVersion: 0.12.1
+    tekton.dev/platforms: linux/amd64
+    tekton.dev/tags: security
+  name: sonarqube-scanner
+  namespace: spring-pipeline
+  labels:
+    app.kubernetes.io/version: '0.2'
+spec:
+  description: >-
+    The following task can be used to perform static analysis on the source code
+    provided the SonarQube server is hosted
+
+    SonarQube is the leading tool for continuously inspecting the Code Quality
+    and Security of your codebases, all while empowering development teams.
+    Analyze over 25 popular programming languages including C#, VB.Net,
+    JavaScript, TypeScript and C++. It detects bugs, vulnerabilities and code
+    smells across project branches and pull requests.
+  params:
+    - default: ''
+      description: Host URL where the sonarqube server is running
+      name: SONAR_HOST_URL
+      type: string
+    - default: ''
+      description: Project's unique key
+      name: SONAR_PROJECT_KEY
+      type: string
+    - default: ''
+      description: Project's unique key
+      name: SONAR_AUTH_TOKEN
+      type: string
+  steps:
+    - command:
+        - sonar-scanner
+        - '-Dsonar.projectKey=$(params.SONAR_PROJECT_KEY)'
+        - '-Dsonar.host.url=$(params.SONAR_HOST_URL)'
+        - '-Dsonar.login=$(params.SONAR_AUTH_TOKEN)'
+        - '-Dsonar.exclusions=**/*.java'
+      image: >-
+        docker.io/sonarsource/sonar-scanner-cli:4.5@sha256:b8c95a37025f3c13162118cd55761ea0b2a13d1837f9deec51b7b6d82c52040a
+      name: sonar-scan
+      resources: {}
+      workingDir: $(workspaces.source.path)
+  workspaces:
+    - name: source
+
