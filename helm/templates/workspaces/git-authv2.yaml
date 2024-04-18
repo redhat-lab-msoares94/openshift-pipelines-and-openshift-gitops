@@ -7,7 +7,7 @@ metadata:
   name: git-auth-{{ $pipeline.pipeName }}
   namespace: {{ $pipeline.projectOcName }}
   annotations:
-    tekton.dev/git-0: https://gitlab.consulting.redhat.com # Described below
+    tekton.dev/git-0: https://github.com
 type: kubernetes.io/basic-auth
 stringData:
   username: glpat-dRwQV4t_zZYzJAsxSDxs
@@ -24,7 +24,7 @@ metadata:
   name: git-auth-{{ $pipeline.pipeName }}
   namespace: {{ $pipeline.projectToName }}
   annotations:
-    tekton.dev/git-0: https://gitlab.consulting.redhat.com # Described below
+    tekton.dev/git-0: https://github.com
 type: kubernetes.io/basic-auth
 stringData:
   username: glpat-dRwQV4t_zZYzJAsxSDxs
