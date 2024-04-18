@@ -4,7 +4,7 @@ apiVersion: tekton.dev/v1beta1
 kind: ClusterTask
 metadata:
   annotations:
-    tekton.dev/pipelines.minVersion: 0.12.1
+    tekton.dev/pipelines.minVersion: 0.38.0
     tekton.dev/tags: git  
   name: git-clonev2
   namespace: {{ $.Values.cicdNamespace }}

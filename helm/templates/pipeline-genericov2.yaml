@@ -65,7 +65,7 @@ spec:
           value: $(params.GIT_SECRET)
       taskRef:
         kind: ClusterTask
-        name: git-clonev2
+        name: git-clone
       workspaces:
         - name: workspace
           workspace: workspace
