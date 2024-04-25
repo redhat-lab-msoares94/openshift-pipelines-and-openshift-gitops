@@ -2,10 +2,10 @@ cicdNamespace: cicd
 pipelinesv2: 
   - projectOcName: apps-dev
     pipeName: netcore-sample
-    appSourceGit: 'redhat-lab-msoares94/netcore-sample'
+    appSourceGit: 'redhat-lab-msoares94/openshift-pipelines-and-openshift-gitops'
     appSourceBranch: 'main'
-    appManifestGit: 'redhat-lab-msoares94/source-demo/netcore-sample-gitops'
-    appManifestGitBranch: 'dev'
+    appManifestGit: 'redhat-lab-msoares94/openshift-pipelines-and-openshift-gitops/source-demo/netcore-sample-gitops'
+    appManifestGitBranch: 'main'
     appManifestPath: '.'
     gitHashCommit: '1.0.0'
     gitHost: 'github.com'
@@ -14,7 +14,7 @@ pipeMoveImage:
   - projectToName: apps-hml
     projectFromName: apps-dev
     pipeName: netcore-sample-move
-    appManifestGit: 'redhat-lab-msoares94/source-demo/netcore-sample-gitops'
+    appManifestGit: 'redhat-lab-msoares94/openshift-pipelines-and-openshift-gitops/source-demo/netcore-sample-gitops'
     appManifestGitBranch: 'hml'
     appManifestPath: '.'
     gitHashCommit: '1.0.0'
@@ -23,7 +23,7 @@ pipeMoveImage:
   - projectToName: apps-prd
     projectFromName: apps-hml
     pipeName: netcore-sample-move
-    appManifestGit: 'redhat-lab-msoares94/source-demo/netcore-sample-gitops'
+    appManifestGit: 'redhat-lab-msoares94/openshift-pipelines-and-openshift-gitops/source-demo/netcore-sample-gitops'
     appManifestGitBranch: 'prd'
     appManifestPath: '.'
     gitHashCommit: '1.0.0'
