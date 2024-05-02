@@ -10,8 +10,8 @@ metadata:
     tekton.dev/git-0: https://github.com
 type: kubernetes.io/basic-auth
 stringData:
-  username: glpat-dRwQV4t_zZYzJAsxSDxs
-  password: glpat-dRwQV4t_zZYzJAsxSDxs
+  username: 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
+  password: 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
 {{ end }}
 {{ end }}
 
@@ -27,7 +27,7 @@ metadata:
     tekton.dev/git-0: https://github.com
 type: kubernetes.io/basic-auth
 stringData:
-  username: glpat-dRwQV4t_zZYzJAsxSDxs
-  password: glpat-dRwQV4t_zZYzJAsxSDxs
+  username: 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
+  password: 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
 {{ end }}
 {{ end }}
