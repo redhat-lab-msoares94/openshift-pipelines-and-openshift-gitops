@@ -15,7 +15,7 @@ pipeMoveImage:
     projectFromName: apps-dev
     pipeName: netcore-sample-move
     appManifestGit: 'redhat-lab-msoares94/openshift-pipelines-and-openshift-gitops/source-demo/netcore-sample-gitops'
-    appManifestGitBranch: 'hml'
+    appManifestGitBranch: 'main'
     appManifestPath: '.'
     gitHashCommit: '1.0.0'
     gitHost: 'github.com'
@@ -24,7 +24,7 @@ pipeMoveImage:
     projectFromName: apps-hml
     pipeName: netcore-sample-move
     appManifestGit: 'redhat-lab-msoares94/openshift-pipelines-and-openshift-gitops/source-demo/netcore-sample-gitops'
-    appManifestGitBranch: 'prd'
+    appManifestGitBranch: 'main'
     appManifestPath: '.'
     gitHashCommit: '1.0.0'
     gitHost: 'github.com'
