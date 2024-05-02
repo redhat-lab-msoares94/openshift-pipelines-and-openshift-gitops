@@ -46,7 +46,7 @@ spec:
         git config --global user.email "tekton@pipeline.com"
         git config --global user.name "$GIT_USER"
 
-        CHECKOUT_DIR="/workspace/workspace"
+        CHECKOUT_DIR="/workspace/source"
 
         cleandir() {
           # Delete any existing contents of the repo directory if it exists.
