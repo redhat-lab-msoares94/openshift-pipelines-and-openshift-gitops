@@ -4,6 +4,7 @@ pipelinesv2:
     pipeName: netcore-sample
     appSourceGit: 'redhat-lab-msoares94/openshift-pipelines-and-openshift-gitops-source-demo'
     appSourceBranch: 'main'
+    appSourcePath: 'netcore-sample'
     appManifestGit: 'redhat-lab-msoares94/openshift-pipelines-and-openshift-gitops-source-demo-gitops'
     appManifestGitBranch: 'main'
     appManifestPath: 'netcore-sample-gitops'

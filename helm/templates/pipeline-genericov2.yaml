@@ -17,17 +17,20 @@ spec:
       default: {{ $pipeline.gitHost }}
     - default: https
       name: GIT_PROTOCOL
-      type: string      
+      type: string
     - name: APP_SOURCE_GIT
-      description: The application git repository      
+      description: The application git repository
       type: string
       default: {{ $pipeline.appSourceGit }}
     - name: APP_SOURCE_BRANCH
-      type: string         
-      default: {{ $pipeline.appSourceBranch }}       
+      type: string
+      default: {{ $pipeline.appSourceBranch }}
+    - name: APP_SOURCE_PATH
+      type: string
+      default: {{ $pipeline.appSourcePath }}
     - name: APP_MANIFESTS_GIT      
       type: string
-      default: {{ $pipeline.appManifestGit }}       
+      default: {{ $pipeline.appManifestGit }}
     - name: APP_MANIFESTS_GIT_BRANCH      
       type: string
       default: {{ $pipeline.appManifestGitBranch }}       
@@ -107,6 +110,8 @@ spec:
         - name: IMAGE
           value: >-
              image-registry.openshift-image-registry.svc:5000/$(tasks.set-namespace.results.ns)/$(tasks.app-name.results.app_name):$(params.GIT_HASH_COMMIT)
+        - name: CONTEXT
+          value: $(params.APP_SOURCE_PATH)
       runAfter:
         - app-name
       taskRef:
@@ -115,7 +120,6 @@ spec:
       workspaces:
         - name: source
           workspace: workspace
-
     - name: update-deployment
       params:
         - name: GIT_HOST
