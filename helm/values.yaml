@@ -2,11 +2,11 @@ cicdNamespace: cicd
 pipelinesv2: 
   - projectOcName: apps-dev
     pipeName: netcore-sample
-    appSourceGit: 'redhat-lab-msoares94/openshift-pipelines-and-openshift-gitops'
+    appSourceGit: 'redhat-lab-msoares94/openshift-pipelines-and-openshift-gitops-source-demo'
     appSourceBranch: 'main'
-    appManifestGit: 'redhat-lab-msoares94/openshift-pipelines-and-openshift-gitops/source-demo/netcore-sample-gitops'
+    appManifestGit: 'redhat-lab-msoares94/openshift-pipelines-and-openshift-gitops-source-demo-gitops'
     appManifestGitBranch: 'main'
-    appManifestPath: '.'
+    appManifestPath: 'netcore-sample-gitops'
     gitHashCommit: '1.0.0'
     gitHost: 'github.com'
 
