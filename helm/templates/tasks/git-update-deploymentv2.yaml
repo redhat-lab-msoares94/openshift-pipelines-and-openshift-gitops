@@ -58,7 +58,7 @@ spec:
         cd git-update-tag-workdir 
         cd $(params.APP_MANIFESTS_PATH)
 
-        DEPLOY_FILE=$(grep "config-file" * |awk -F":" '{print $1}')
+        DEPLOY_FILE=$(grep -R "config-file" * |awk -F":" '{print $1}')
         LAST_IMAGE=$(grep "nameVersion:" $DEPLOY_FILE |awk -F":" '{print $4}')
         LI=$(echo -n $LAST_IMAGE)
 
