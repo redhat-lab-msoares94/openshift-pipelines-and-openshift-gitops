@@ -1,15 +1,16 @@
 {{ if .Values.cicdNamespace }}
+{{ range $pipeline := .Values.pipelinesv2 }}
 ---
 apiVersion: tekton.dev/v1beta1
-kind: ClusterTask
+kind: Task
 metadata:
   annotations:
-    tekton.dev/pipelines.minVersion: 0.38.0
-    tekton.dev/tags: git  
-  name: git-clonev2
-  namespace: {{ $.Values.cicdNamespace }}
+    tekton.dev/pipelines.minVersion: "0.50.0"
+    tekton.dev/tags: git
+  name: git-clone
+  namespace: {{ $pipeline.projectOcName }}
   labels:
-    app.kubernetes.io/version: '0.1'
+    app.kubernetes.io/version: '0.9'
     operator.tekton.dev/provider-type: community
 spec:
   description: This Task clone repo
@@ -26,7 +27,7 @@ spec:
       type: string
   results:
     - description: Application name
-      name: git-clonev2
+      name: git-clone
   steps:      
     - image: 'registry.redhat.io/openshift-pipelines/pipelines-git-init-rhel8@sha256:c4b2183f7c7997bd401d86b33eefb637b3ef2fa90618e875106292cd69a15c14'
       name: git-clone-source-repo
@@ -77,4 +78,5 @@ spec:
   workspaces:
     - description: The workspace consisting project.
       name: workspace 
+{{ end }}
 {{ end }}

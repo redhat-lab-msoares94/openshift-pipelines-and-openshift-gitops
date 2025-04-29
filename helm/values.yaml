@@ -1,21 +1,21 @@
 cicdNamespace: cicd
-pipelinesv2: 
+pipelinesv2:
   - projectOcName: apps-dev
-    pipeName: netcore-sample
+    pipeName: quarkus-api-consulta-cep
     appSourceGit: 'redhat-lab-msoares94/openshift-pipelines-and-openshift-gitops-source-demo'
     appSourceBranch: 'main'
-    appSourcePath: 'netcore-sample'
+    appSourcePath: 'quarkus-api-consulta-cep'
     appManifestGit: 'redhat-lab-msoares94/openshift-pipelines-and-openshift-gitops-source-demo-gitops'
     appManifestGitBranch: 'main'
-    appManifestPath: 'netcore-sample-gitops'
+    appManifestPath: 'quarkus-api-consulta-cep-gitops'
     gitHashCommit: '1.0.0'
     gitHost: 'github.com'
 
-pipeMoveImage: 
+pipeMoveImage:
   - projectToName: apps-hml
     projectFromName: apps-dev
-    pipeName: netcore-sample-move
-    appManifestGit: 'redhat-lab-msoares94/openshift-pipelines-and-openshift-gitops/source-demo/netcore-sample-gitops'
+    pipeName: quarkus-api-consulta-cep-move
+    appManifestGit: 'redhat-lab-msoares94/openshift-pipelines-and-openshift-gitops/source-demo/quarkus-api-consulta-cep-gitops'
     appManifestGitBranch: 'main'
     appManifestPath: '.'
     gitHashCommit: '1.0.0'
@@ -23,8 +23,8 @@ pipeMoveImage:
 
   - projectToName: apps-prd
     projectFromName: apps-hml
-    pipeName: netcore-sample-move
-    appManifestGit: 'redhat-lab-msoares94/openshift-pipelines-and-openshift-gitops/source-demo/netcore-sample-gitops'
+    pipeName: quarkus-api-consulta-cep-move
+    appManifestGit: 'redhat-lab-msoares94/openshift-pipelines-and-openshift-gitops/source-demo/quarkus-api-consulta-cep-gitops'
     appManifestGitBranch: 'main'
     appManifestPath: '.'
     gitHashCommit: '1.0.0'

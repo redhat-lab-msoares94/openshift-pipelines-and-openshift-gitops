@@ -1,15 +1,16 @@
-{{ if .Values.cicdNamespace }}
+{{- if .Values.pipeMoveImage }}
+{{- range $move := .Values.pipeMoveImage }}
 ---
 apiVersion: tekton.dev/v1beta1
-kind: ClusterTask
+kind: Task
 metadata:
   annotations:
-    tekton.dev/pipelines.minVersion: 0.12.1
-    tekton.dev/tags: git  
+    tekton.dev/pipelines.minVersion: "0.50.0"
+    tekton.dev/tags: git
   name: git-update-deployment-move
-  namespace: {{ $.Values.cicdNamespace }}
+  namespace: {{ $move.projectToName }}
   labels:
-    app.kubernetes.io/version: '0.1'
+    app.kubernetes.io/version: '0.9'
     operator.tekton.dev/provider-type: community
 spec:
   description: This Task can be used to update image digest in a Git repo using kustomize
@@ -18,23 +19,22 @@ spec:
       type: string
     - name: GIT_HOST
       type: string
-    - name: GIT_PATH     
+    - name: GIT_PATH
       type: string
     - name: APP_MANIFESTS_PATH
       type: string
     - name: GIT_HASH_COMMIT
       type: string
-    - name: SOURCE_BRANCH     
+    - name: SOURCE_BRANCH
       type: string
     - name: git-secret-name
       type: string
   results:
     - description: The commit SHA
       name: commit
-  results:
     - description: Application name
       name: app_name
-  steps:      
+  steps:
     - image: 'registry.redhat.io/openshift-pipelines/pipelines-git-init-rhel8@sha256:c4b2183f7c7997bd401d86b33eefb637b3ef2fa90618e875106292cd69a15c14'
       name: git-clone
       env:
@@ -48,7 +48,6 @@ spec:
             secretKeyRef:
               key: username
               name: $(params.git-secret-name)
-      resources: {}
       script: |
         rm -fr git-update-tag-workdir
 
@@ -67,29 +66,19 @@ spec:
 
         sed -i "s/$LI/$(params.GIT_HASH_COMMIT)/g" $DEPLOY_FILE
 
-        git status
+        git add .
+        git commit -m "[$(context.taskRun.name)] Image tag updated"
 
-        echo "Executing git add"
-        git add .      
-
-        echo "Executing git commit "        
-        git commit -m "[$(context.taskRun.name)] Image tag updated"             
-
-        echo "Add remote"    
-       
         REPOSITORY=$(echo "$(params.GIT_PROTOCOL)://$(params.GIT_HOST)/$(params.GIT_PATH)" | sed -E "s#https://(.*)#https://$GIT_USER:$GIT_TOKEN@\1#g")
-
         git remote add auth-origin $REPOSITORY
-        
-        # echo "Executing git push"
         git -c http.sslVerify=false push auth-origin $(params.SOURCE_BRANCH)
 
-        DEPLOY_FILE=$(grep "config-file" * |awk -F":" '{print $1}')
         echo -n $(grep -i "  deploymentName:" $DEPLOY_FILE |head -n1|awk -F":" '{print $2}') > $(results.app_name.path)
 
       workingDir: $(workspaces.workspace.path)
-      
+
   workspaces:
     - description: The workspace consisting of maven project.
-      name: workspace 
-{{ end }}
+      name: workspace
+{{- end }}
+{{- end }}

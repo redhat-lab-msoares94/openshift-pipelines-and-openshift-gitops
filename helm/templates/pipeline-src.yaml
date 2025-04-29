@@ -67,8 +67,14 @@ spec:
         - name: git-secret-name
           value: $(params.GIT_SECRET)
       taskRef:
-        kind: ClusterTask
-        name: git-clonev2
+        resolver: cluster
+        params:
+          - name: name
+            value: git-clone
+          - name: namespace
+            value: "{{ $pipeline.projectOcName }}"
+          - name: kind
+            value: task
       workspaces:
         - name: workspace
           workspace: workspace
@@ -79,8 +85,14 @@ spec:
       runAfter:
         - source-clone 
       taskRef:
-        kind: ClusterTask
-        name: set-build-namespace             
+        resolver: cluster
+        params:
+          - name: name
+            value: set-build-namespace
+          - name: namespace
+            value: "{{ $pipeline.projectOcName }}"
+          - name: kind
+            value: task
     - name: app-name
       params:               
         - name: GIT_HOST
@@ -98,25 +110,57 @@ spec:
       runAfter:
         - set-namespace
       taskRef:
-        kind: ClusterTask
-        name: set-app-name
+        resolver: cluster
+        params:
+          - name: name
+            value: set-app-name
+          - name: namespace
+            value: "{{ $pipeline.projectOcName }}"
+          - name: kind
+            value: task
       workspaces:
         - name: workspace
-          workspace: workspace  
+          workspace: workspace
+    - name: build-maven
+      params:
+        - name: SUBDIRECTORY
+          value: $(params.APP_SOURCE_PATH)
+      runAfter:
+        - app-name
+      taskRef:
+        resolver: cluster
+        params:
+          - name: name
+            value: maven
+          - name: namespace
+            value: openshift-pipelines
+          - name: kind
+            value: task
+      workspaces:
+        - name: source
+          workspace: workspace
     - name: build-image
       params:
-        - name: TLSVERIFY
+        - name: TLS_VERIFY
           value: 'false'
         - name: IMAGE
           value: >-
              image-registry.openshift-image-registry.svc:5000/$(tasks.set-namespace.results.ns)/$(tasks.app-name.results.app_name):$(params.GIT_HASH_COMMIT)
         - name: CONTEXT
           value: $(params.APP_SOURCE_PATH)
+        - name: DOCKERFILE
+          value: $(params.APP_SOURCE_PATH)/src/main/docker/Dockerfile.jvm
       runAfter:
-        - app-name
+        - build-maven
       taskRef:
-        kind: ClusterTask
-        name: buildah
+        resolver: cluster
+        params:
+          - name: name
+            value: buildah
+          - name: namespace
+            value: openshift-pipelines
+          - name: kind
+            value: task
       workspaces:
         - name: source
           workspace: workspace
@@ -139,11 +183,17 @@ spec:
       runAfter:
         - build-image
       taskRef:
-        kind: ClusterTask
-        name: git-update-deployment
+        resolver: cluster
+        params:
+          - name: name
+            value: git-update-deployment
+          - name: namespace
+            value: "{{ $pipeline.projectOcName }}"
+          - name: kind
+            value: task
       workspaces:
         - name: workspace
-          workspace: workspace  
+          workspace: workspace
   workspaces:
     - name: workspace
 {{ end }}

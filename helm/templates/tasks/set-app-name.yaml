@@ -1,18 +1,19 @@
 {{ if .Values.cicdNamespace }}
+{{ range $pipeline := .Values.pipelinesv2 }}
 ---
 apiVersion: tekton.dev/v1beta1
-kind: ClusterTask
+kind: Task
 metadata:
   annotations:
-    tekton.dev/pipelines.minVersion: 0.12.1
-    tekton.dev/tags: git  
-  name: git-update-deployment
-  namespace: {{ $.Values.cicdNamespace }}
+    tekton.dev/pipelines.minVersion: "0.50.0"
+    tekton.dev/tags: git
+  name: set-app-name
+  namespace: {{ $pipeline.projectOcName }}
   labels:
-    app.kubernetes.io/version: '0.1'
+    app.kubernetes.io/version: '0.9'
     operator.tekton.dev/provider-type: community
 spec:
-  description: This Task can be used to update image digest in a Git repo using kustomize
+  description: This Task get app name from deployment file.
   params:
     - name: GIT_PROTOCOL
       type: string
@@ -20,20 +21,18 @@ spec:
       type: string
     - name: GIT_PATH     
       type: string
-    - name: APP_MANIFESTS_PATH
-      type: string
-    - name: GIT_HASH_COMMIT
-      type: string
     - name: SOURCE_BRANCH     
       type: string
+    - name: SOURCE_FOLDER     
+      type: string  
     - name: git-secret-name
       type: string
   results:
-    - description: The commit SHA
-      name: commit
+    - description: Application name
+      name: app_name
   steps:      
     - image: 'registry.redhat.io/openshift-pipelines/pipelines-git-init-rhel8@sha256:c4b2183f7c7997bd401d86b33eefb637b3ef2fa90618e875106292cd69a15c14'
-      name: git-clone
+      name: git-clone-config-repo
       env:
         - name: GIT_TOKEN
           valueFrom:
@@ -47,42 +46,29 @@ spec:
               name: $(params.git-secret-name)
       resources: {}
       script: |
+        
         rm -fr git-update-tag-workdir
-
         git config --global user.email "tekton@pipeline.com"
         git config --global user.name "$GIT_USER"
         git config --global http.sslVerify false
 
         git clone -b $(params.SOURCE_BRANCH) $(params.GIT_PROTOCOL)://$GIT_USER:$GIT_TOKEN@$(params.GIT_HOST)/$(params.GIT_PATH).git git-update-tag-workdir
-
-        cd git-update-tag-workdir 
-        cd $(params.APP_MANIFESTS_PATH)
-
-        DEPLOY_FILE=$(grep -R "config-file" * |awk -F":" '{print $1}')
-        LAST_IMAGE=$(grep "nameVersion:" $DEPLOY_FILE |awk -F":" '{print $4}')
-        LI=$(echo -n $LAST_IMAGE)
-
-        sed -i "s/$LI/$(params.GIT_HASH_COMMIT)/g" $DEPLOY_FILE
-
-        git status
-
-        echo "Executing git add"
-        git add .      
-
-        echo "Executing git commit "        
-        git commit -m "[$(context.taskRun.name)] Image tag updated"             
-
-        echo "Add remote"    
-       
-        REPOSITORY=$(echo "$(params.GIT_PROTOCOL)://$(params.GIT_HOST)/$(params.GIT_PATH)" | sed -E "s#https://(.*)#https://$GIT_USER:$GIT_TOKEN@\1#g")
-
-        git remote add auth-origin $REPOSITORY
         
-        # echo "Executing git push"
-        git -c http.sslVerify=false push auth-origin $(params.SOURCE_BRANCH)
+      workingDir: $(workspaces.workspace.path)
+    - image: alpine    
+      name: get-app-name
+      resources: {}
+      script: |   
+        cd git-update-tag-workdir
+        cd $(params.SOURCE_FOLDER)
+
+        DEPLOY_FILE=$(grep "config-file" * |awk -F":" '{print $1}')
+        echo -n $(grep -i "  deploymentName:" $DEPLOY_FILE |head -n1|awk -F":" '{print $2}') > $(results.app_name.path)
+        
       workingDir: $(workspaces.workspace.path)
       
   workspaces:
     - description: The workspace consisting of maven project.
       name: workspace 
+{{ end }}
 {{ end }}

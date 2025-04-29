@@ -62,8 +62,14 @@ spec:
         - name: git-secret-name
           value: $(params.GIT_SECRET)
       taskRef:
-        kind: ClusterTask
-        name: git-update-deployment-move
+        resolver: cluster
+        params:
+          - name: name
+            value: git-update-deployment-move
+          - name: namespace
+            value: "{{ $pipeline.projectOcName }}"
+          - name: kind
+            value: task
       workspaces:
         - name: workspace
           workspace: workspace  
@@ -80,8 +86,14 @@ spec:
       runAfter:
       - update-deployment
       taskRef:
-        kind: ClusterTask
-        name: skopeo-copy
+        resolver: cluster
+        params:
+          - name: name
+            value: skopeo-copy
+          - name: namespace
+            value: openshift-pipelines
+          - name: kind
+            value: task
       workspaces:
       - name: images-url
         workspace: workspace          

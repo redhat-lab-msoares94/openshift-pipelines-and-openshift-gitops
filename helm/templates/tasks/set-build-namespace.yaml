@@ -1,15 +1,16 @@
 {{ if .Values.cicdNamespace }}
+{{ range $pipeline := .Values.pipelinesv2 }}
 ---
 apiVersion: tekton.dev/v1beta1
-kind: ClusterTask
+kind: Task
 metadata:
   annotations:
-    tekton.dev/pipelines.minVersion: 0.12.1
-    tekton.dev/tags: git  
+    tekton.dev/pipelines.minVersion: "0.50.0"
+    tekton.dev/tags: git
   name: set-build-namespace
-  namespace: {{ $.Values.cicdNamespace }}
+  namespace: {{ $pipeline.projectOcName }}
   labels:
-    app.kubernetes.io/version: '0.1'
+    app.kubernetes.io/version: '0.9'
     operator.tekton.dev/provider-type: community
 spec:
   description: This Task can be used to set the namespace to run pipeline
@@ -32,4 +33,5 @@ spec:
         PROJECT=$(echo -n "$(params.PROJECT_OC_NAME)") 
         
         echo -n $PROJECT > $(results.ns.path)
-{{ end }}      
+{{ end }}
+{{ end }}
