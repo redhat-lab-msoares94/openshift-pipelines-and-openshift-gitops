@@ -1,0 +1,11 @@
+{{- if .Values.enableTektonClusterTaskCreator }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: tekton-cluster-role-binding-task-creator
+rules:
+- apiGroups: ["tekton.dev"]
+  resources: ["clustertasks"]
+  verbs: ["create", "get", "list", "watch", "update", "patch", "delete"]
+{{- end }}
