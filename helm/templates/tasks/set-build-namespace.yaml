@@ -1,4 +1,4 @@
-{{ if .Values.cicdNamespace }}
+{{ if .Values.pipelineNamespace }}
 {{ range $pipeline := .Values.pipelinesv2 }}
 ---
 apiVersion: tekton.dev/v1beta1

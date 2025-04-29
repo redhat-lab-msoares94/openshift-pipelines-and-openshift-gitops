@@ -1,4 +1,4 @@
-cicdNamespace: cicd
+pipelineNamespace: pipeline-tekton
 
 enableTektonClusterTaskCreator: true
 
@@ -9,10 +9,10 @@ pipelinesv2:
   - projectOcName: apps-dev
     pipeName: quarkus-api-consulta-cep
     appSourceGit: 'redhat-lab-msoares94/openshift-pipelines-and-openshift-gitops-source-demo'
-    appSourceBranch: 'main'
+    appSourceBranch: 'dev'
     appSourcePath: 'quarkus-api-consulta-cep'
     appManifestGit: 'redhat-lab-msoares94/openshift-pipelines-and-openshift-gitops-source-demo-gitops'
-    appManifestGitBranch: 'main'
+    appManifestGitBranch: 'dev'
     appManifestPath: 'quarkus-api-consulta-cep-gitops'
     gitHashCommit: '1.0.0'
     gitHost: 'github.com'
@@ -22,7 +22,7 @@ pipeMoveImage:
     projectFromName: apps-dev
     pipeName: quarkus-api-consulta-cep-move
     appManifestGit: 'redhat-lab-msoares94/openshift-pipelines-and-openshift-gitops/source-demo/quarkus-api-consulta-cep-gitops'
-    appManifestGitBranch: 'main'
+    appManifestGitBranch: 'hml'
     appManifestPath: '.'
     gitHashCommit: '1.0.0'
     gitHost: 'github.com'
@@ -31,7 +31,7 @@ pipeMoveImage:
     projectFromName: apps-hml
     pipeName: quarkus-api-consulta-cep-move
     appManifestGit: 'redhat-lab-msoares94/openshift-pipelines-and-openshift-gitops/source-demo/quarkus-api-consulta-cep-gitops'
-    appManifestGitBranch: 'main'
+    appManifestGitBranch: 'prd'
     appManifestPath: '.'
     gitHashCommit: '1.0.0'
     gitHost: 'github.com'
