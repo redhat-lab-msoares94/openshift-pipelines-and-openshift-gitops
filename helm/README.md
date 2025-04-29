@@ -23,17 +23,7 @@ oc adm policy add-cluster-role-to-user cluster-admin system:serviceaccount:opens
 # Colocar esse trecho no manifesto do recurso Application do ArgoCD, que gerencia o Helm
 ignoreDifferences:
   - kind: Secret
+    namespace: pipeline-tekton
     name: git-auth-.*
-    namespace: apps-dev
-    jsonPointers:
-      - /data
-  - kind: Secret
-    name: git-auth-.*
-    namespace: apps-hml
-    jsonPointers:
-      - /data
-  - kind: Secret
-    name: git-auth-.*
-    namespace: apps-prd
     jsonPointers:
       - /data
