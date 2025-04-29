@@ -8,7 +8,7 @@ metadata:
   namespace: {{ $pipeline.projectToName }}
 spec:
   params:
-    - default: git-auth-{{ $pipeline.pipeName }}
+    - default: {{ $.Values.gitAuth.secretName }}
       name: GIT_SECRET
       type: string
     - name: GIT_HOST
