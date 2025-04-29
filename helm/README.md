@@ -20,29 +20,6 @@ oc adm policy add-scc-to-user privileged -z pipeline -n apps-dev
 
 oc adm policy add-cluster-role-to-user cluster-admin system:serviceaccount:openshift-gitops:openshift-gitops-argocd-application-controller
 
-# Criar os recursos abaixo
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  name: tekton-cluster-task-creator
-rules:
-- apiGroups: ["tekton.dev"]
-  resources: ["clustertasks"]
-  verbs: ["create", "get", "list", "watch", "update", "patch", "delete"]
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: tekton-cluster-task-creator-binding
-subjects:
-- kind: ServiceAccount
-  name: openshift-gitops-argocd-application-controller
-  namespace: openshift-gitops
-roleRef:
-  kind: ClusterRole
-  name: tekton-cluster-task-creator
-  apiGroup: rbac.authorization.k8s.io
-
 # Colocar esse trecho no manifesto do recurso Application do ArgoCD, que gerencia o Helm
 ignoreDifferences:
   - group: ""

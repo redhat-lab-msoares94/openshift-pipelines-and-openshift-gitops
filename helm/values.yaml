@@ -1,4 +1,10 @@
 cicdNamespace: cicd
+
+enableTektonClusterTaskCreator: true
+
+argocdNamespace: openshift-gitops
+argocdServiceAccountName: openshift-gitops-argocd-application-controller
+
 pipelinesv2:
   - projectOcName: apps-dev
     pipeName: quarkus-api-consulta-cep
