@@ -43,3 +43,11 @@ roleRef:
   name: tekton-cluster-task-creator
   apiGroup: rbac.authorization.k8s.io
 
+# Colocar esse trecho no manifesto do recurso Application do ArgoCD, que gerencia o Helm
+ignoreDifferences:
+  - group: ""
+    kind: Secret
+    name: git-auth-.*
+    namespace: apps-dev
+    jsonPointers:
+      - /data
