@@ -1,8 +1,7 @@
 pipelineNamespace: pipeline-tekton
 
-gitAuth:
-  gitUsername: ""
-  gitPassword: ""
+gitUsername: ""
+gitPassword: ""
 
 enableTektonClusterTaskCreator: true
 
