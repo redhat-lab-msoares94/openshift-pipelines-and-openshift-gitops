@@ -73,33 +73,30 @@ spec:
       workspaces:
         - name: workspace
           workspace: workspace  
-    - name: skopeo-copy
-      params:
-      - name: SRC_TLS_VERIFY
-        value: "false"
-      - name: DEST_TLS_VERIFY
-        value: "false"
-      - name: SOURCE_IMAGE_URL
-        value: docker://image-registry.openshift-image-registry.svc:5000/$(params.PROJECT_OC_FROM_NAME)/$(tasks.update-deployment.results.app_name):$(params.GIT_HASH_COMMIT)
-      - name: DESTINATION_IMAGE_URL
-        value: docker://image-registry.openshift-image-registry.svc:5000/$(params.PROJECT_OC_TO_NAME)/$(tasks.update-deployment.results.app_name):$(params.GIT_HASH_COMMIT)
-      runAfter:
-      - update-deployment
-      taskRef:
-        resolver: cluster
-        params:
-          - name: name
-            value: skopeo-copy
-          - name: namespace
-            value: openshift-pipelines
-          - name: kind
-            value: task
-      workspaces:
-      - name: images_url
-        workspace: workspace
-      workspaces:
-        - name: images_url
-          workspace: workspace
+    # - name: skopeo-copy
+    #   params:
+    #   - name: SRC_TLS_VERIFY
+    #     value: "false"
+    #   - name: DEST_TLS_VERIFY
+    #     value: "false"
+    #   - name: SOURCE_IMAGE_URL
+    #     value: docker://image-registry.openshift-image-registry.svc:5000/$(params.PROJECT_OC_FROM_NAME)/$(tasks.update-deployment.results.app_name):$(params.GIT_HASH_COMMIT)
+    #   - name: DESTINATION_IMAGE_URL
+    #     value: docker://image-registry.openshift-image-registry.svc:5000/$(params.PROJECT_OC_TO_NAME)/$(tasks.update-deployment.results.app_name):$(params.GIT_HASH_COMMIT)
+    #   runAfter:
+    #   - update-deployment
+    #   taskRef:
+    #     resolver: cluster
+    #     params:
+    #       - name: name
+    #         value: skopeo-copy
+    #       - name: namespace
+    #         value: openshift-pipelines
+    #       - name: kind
+    #         value: task
+    #   workspaces:
+    #     - name: images_url
+    #       workspace: workspace
   workspaces:
     - name: workspace
 {{ end }}
