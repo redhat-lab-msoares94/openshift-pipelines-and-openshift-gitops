@@ -15,7 +15,7 @@ pipelinesv2:
   - projectOcName: apps-dev
     pipeName: quarkus-api-consulta-cep
     appSourceGit: 'redhat-lab-msoares94/openshift-pipelines-and-openshift-gitops-source-demo'
-    appSourceBranch: 'dev'
+    appSourceBranch: 'main'
     appSourcePath: 'quarkus-api-consulta-cep'
     appManifestGit: 'redhat-lab-msoares94/openshift-pipelines-and-openshift-gitops-source-demo-gitops'
     appManifestGitBranch: 'dev'
