@@ -8,6 +8,8 @@ metadata:
   namespace: {{ $pipeline.projectOcName }}
 secrets:
   - name: quay-secret
+imagePullSecrets:
+  - name: quay-secret
 {{ end }}
 {{ end }}
 
@@ -20,6 +22,8 @@ metadata:
   name: pipeline
   namespace: {{ $pipeline.projectToName }}
 secrets:
+  - name: quay-secret
+imagePullSecrets:
   - name: quay-secret
 {{ end }}
 {{ end }}

@@ -176,8 +176,6 @@ spec:
         - name: DESTINATION_IMAGE_URL
           value: >-
             {{ $.Values.externalRegistry.protocol }}://{{ $.Values.externalRegistry.host }}/$(tasks.set-namespace.results.ns)/$(tasks.app-name.results.app_name):$(params.GIT_HASH_COMMIT)
-        - name: REGISTRY_AUTH_FILE
-          value: {{ $.Values.externalRegistry.dockerconfig }}
       runAfter:
         - build-image
       taskRef:
