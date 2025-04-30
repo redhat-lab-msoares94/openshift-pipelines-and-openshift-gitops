@@ -75,13 +75,13 @@ spec:
           workspace: workspace  
     - name: skopeo-copy
       params:
-      - name: srcTLSverify
+      - name: SRC_TLS_VERIFY
         value: "false"
-      - name: destTLSverify
+      - name: DEST_TLS_VERIFY
         value: "false"
-      - name: srcImageURL
+      - name: SOURCE_IMAGE_URL
         value: docker://image-registry.openshift-image-registry.svc:5000/$(params.PROJECT_OC_FROM_NAME)/$(tasks.update-deployment.results.app_name):$(params.GIT_HASH_COMMIT)
-      - name: destImageURL
+      - name: DESTINATION_IMAGE_URL
         value: docker://image-registry.openshift-image-registry.svc:5000/$(params.PROJECT_OC_TO_NAME)/$(tasks.update-deployment.results.app_name):$(params.GIT_HASH_COMMIT)
       runAfter:
       - update-deployment
