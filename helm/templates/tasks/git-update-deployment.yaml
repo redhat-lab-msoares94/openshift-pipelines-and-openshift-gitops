@@ -60,7 +60,7 @@ spec:
         cd $(params.APP_MANIFESTS_PATH)
 
         DEPLOY_FILE=$(grep -R "config-file" * |awk -F":" '{print $1}')
-        LAST_IMAGE=$(grep "nameVersion:" $DEPLOY_FILE |awk -F":" '{print $4}')
+        LAST_IMAGE=$(grep "nameVersion:" $DEPLOY_FILE |awk -F":" '{print $3}')
         LI=$(echo -n $LAST_IMAGE)
 
         sed -i "s/$LI/$(params.GIT_HASH_COMMIT)/g" $DEPLOY_FILE
@@ -68,19 +68,25 @@ spec:
         git status
 
         echo "Executing git add"
-        git add .      
+        git add .
 
-        echo "Executing git commit "        
-        git commit -m "[$(context.taskRun.name)] Image tag updated"             
+        if git diff-index --quiet HEAD; then
+          echo "No changes to commit. Skipping commit and push."
+        else
 
-        echo "Add remote"    
-       
-        REPOSITORY=$(echo "$(params.GIT_PROTOCOL)://$(params.GIT_HOST)/$(params.GIT_PATH)" | sed -E "s#https://(.*)#https://$GIT_USER:$GIT_TOKEN@\1#g")
+          echo "Executing git commit "        
+          git commit -m "[$(context.taskRun.name)] Image tag updated"             
 
-        git remote add auth-origin $REPOSITORY
+          echo "Add remote"    
         
-        # echo "Executing git push"
-        git -c http.sslVerify=false push auth-origin $(params.SOURCE_BRANCH)
+          REPOSITORY=$(echo "$(params.GIT_PROTOCOL)://$(params.GIT_HOST)/$(params.GIT_PATH)" | sed -E "s#https://(.*)#https://$GIT_USER:$GIT_TOKEN@\1#g")
+
+          git remote add auth-origin $REPOSITORY
+          
+          # echo "Executing git push"
+          git -c http.sslVerify=false push auth-origin $(params.SOURCE_BRANCH)
+        fi
+
       workingDir: $(workspaces.workspace.path)
       
   workspaces:
