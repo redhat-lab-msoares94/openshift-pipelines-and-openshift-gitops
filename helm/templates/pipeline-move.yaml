@@ -95,7 +95,7 @@ spec:
           - name: kind
             value: task
       workspaces:
-      - name: images-url
+      - name: images_url
         workspace: workspace          
   workspaces:
     - name: workspace
