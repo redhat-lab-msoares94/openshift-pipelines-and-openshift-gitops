@@ -226,7 +226,7 @@ spec:
         - name: git-secret-name
           value: $(params.GIT_SECRET)
       runAfter:
-        - push-to-external-registry
+        - roxctl-scan
       taskRef:
         resolver: cluster
         params:
