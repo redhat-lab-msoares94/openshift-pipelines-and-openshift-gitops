@@ -191,7 +191,7 @@ spec:
         - name: images_url
           workspace: workspace
         - name: dockerconfig
-          workspace: dockerconfig
+          workspace: workspace
     - name: update-deployment
       params:
         - name: GIT_HOST
