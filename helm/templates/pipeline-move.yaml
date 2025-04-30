@@ -97,6 +97,32 @@ spec:
       workspaces:
       - name: images_url
         workspace: workspace
+    - name: push-to-external-registry
+      params:
+        - name: SRC_TLS_VERIFY
+          value: "false"
+        - name: DEST_TLS_VERIFY
+          value: "false"
+        - name: SOURCE_IMAGE_URL
+          value: >-
+            docker://image-registry.openshift-image-registry.svc:5000/$(tasks.set-namespace.results.ns)/$(tasks.app-name.results.app_name):$(params.GIT_HASH_COMMIT)
+        - name: DESTINATION_IMAGE_URL
+          value: >-
+            {{ $.Values.externalRegistry.protocol }}://{{ $.Values.externalRegistry.host }}/$(tasks.set-namespace.results.ns)/$(tasks.app-name.results.app_name):$(params.GIT_HASH_COMMIT)
+      runAfter:
+        - skopeo-copy
+      taskRef:
+        resolver: cluster
+        params:
+          - name: name
+            value: skopeo-copy
+          - name: namespace
+            value: openshift-pipelines
+          - name: kind
+            value: task
+      workspaces:
+        - name: images_url
+          workspace: workspace
   workspaces:
     - name: workspace
 {{ end }}
