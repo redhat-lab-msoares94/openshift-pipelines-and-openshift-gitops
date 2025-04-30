@@ -9,6 +9,7 @@ externalRegistry:
   enabled: true
   host: quay.apps.cluster-sj5vt.sj5vt.sandbox1671.opentlc.com
   protocol: docker
+  dockerconfig: ewoJImF1dGhzIjogewoJCSJxdWF5LmFwcHMuY2x1c3Rlci1zajV2dC5zajV2dC5zYW5kYm94MTY3MS5vcGVudGxjLmNvbSI6IHsKCQkJImF1dGgiOiAiY1hWaGVXRmtiV2x1T25GMVlYbGhaRzFwYmc9PSIKCQl9Cgl9Cn0
 
 pipelinesv2:
   - projectOcName: apps-dev
