@@ -175,7 +175,7 @@ spec:
             docker://image-registry.openshift-image-registry.svc:5000/$(tasks.set-namespace.results.ns)/$(tasks.app-name.results.app_name):$(params.GIT_HASH_COMMIT)
         - name: DESTINATION_IMAGE_URL
           value: >-
-            {{ $.Values.externalRegistry.protocol }}://{{ $.Values.externalRegistry.host }}/$(tasks.set-namespace.results.ns)/$(tasks.app-name.results.app_name):$(params.GIT_HASH_COMMIT)
+            {{ $.Values.externalRegistry.protocol }}://{{ $.Values.externalRegistry.host }}/{{ $.Values.pipelineNamespace }}/$(tasks.app-name.results.app_name):$(params.GIT_HASH_COMMIT)
       runAfter:
         - build-image
       taskRef:
