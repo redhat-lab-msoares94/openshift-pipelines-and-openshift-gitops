@@ -1,8 +1,5 @@
 pipelineNamespace: pipeline-tekton
 
-gitUsername: ""
-gitPassword: ""
-
 enableTektonClusterTaskCreator: true
 
 argocdNamespace: openshift-gitops
