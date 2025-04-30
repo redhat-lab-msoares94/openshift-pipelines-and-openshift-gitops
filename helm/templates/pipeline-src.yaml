@@ -190,8 +190,6 @@ spec:
       workspaces:
         - name: images_url
           workspace: workspace
-        - name: dockerconfig
-          workspace: workspace
     - name: update-deployment
       params:
         - name: GIT_HOST
@@ -224,7 +222,5 @@ spec:
           workspace: workspace
   workspaces:
     - name: workspace
-    - name: dockerconfig
-      description: Docker config secret
 {{ end }}
 {{ end }}    
