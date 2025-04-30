@@ -1,0 +1,25 @@
+{{ if .Values.pipelinesv2 }}
+{{ range $pipeline := .Values.pipelinesv2 }}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: pipeline
+  namespace: {{ $pipeline.projectOcName }}
+secrets:
+  - name: quay-secret
+{{ end }}
+{{ end }}
+
+{{ if .Values.pipeMoveImage }}
+{{ range $pipeline := .Values.pipeMoveImage }}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: pipeline
+  namespace: {{ $pipeline.projectToName }}
+secrets:
+  - name: quay-secret
+{{ end }}
+{{ end }}
