@@ -176,7 +176,8 @@ spec:
         {{- if .Values.externalRegistry.enabled }}
         - name: DESTINATION_IMAGE_URL
           value: >-
-            {{ .Values.externalRegistry.protocol }}://{{ .Values.externalRegistry.host }}/$(tasks.set-namespace.results.ns)/$(tasks.app-name.results.app_name):$(params.GIT_HASH_COMMIT)        {{- end }}
+            {{ .Values.externalRegistry.protocol }}://{{ .Values.externalRegistry.host }}/$(tasks.set-namespace.results.ns)/$(tasks.app-name.results.app_name):$(params.GIT_HASH_COMMIT)
+        {{- end }}
       runAfter:
         - build-image
       taskRef:
