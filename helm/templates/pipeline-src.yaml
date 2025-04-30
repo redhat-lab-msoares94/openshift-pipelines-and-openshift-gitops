@@ -190,6 +190,25 @@ spec:
       workspaces:
         - name: images_url
           workspace: workspace
+    - name: roxctl-scan
+      params:
+        - name: IMAGE
+          value: "{{ $.Values.externalRegistry.protocol }}://{{ $.Values.externalRegistry.host }}/$(tasks.set-namespace.results.ns)/$(tasks.app-name.results.app_name):$(params.GIT_HASH_COMMIT)"
+        - name: CENTRAL_HOST
+          value: "{{ $.Values.roxctlScan.endpoint }}"
+        - name: INSECURE
+          value: "true"
+      runAfter:
+        - push-to-external-registry
+      taskRef:
+        resolver: cluster
+        params:
+          - name: name
+            value: roxctl-scan
+          - name: namespace
+            value: "{{ $pipeline.projectOcName }}"
+          - name: kind
+            value: task
     - name: update-deployment
       params:
         - name: GIT_HOST
@@ -207,7 +226,7 @@ spec:
         - name: git-secret-name
           value: $(params.GIT_SECRET)
       runAfter:
-        - build-image
+        - push-to-external-registry
       taskRef:
         resolver: cluster
         params:
