@@ -19,7 +19,7 @@ spec:
       type: string
     - name: GIT_HOST
       type: string
-    - name: GIT_PATH     
+    - name: GIT_PATH
       type: string
     - name: APP_MANIFESTS_PATH
       type: string

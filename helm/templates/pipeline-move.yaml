@@ -67,7 +67,7 @@ spec:
           - name: name
             value: git-update-deployment-move
           - name: namespace
-            value: "{{ $pipeline.projectOcName }}"
+            value: {{ $pipeline.projectToName }}
           - name: kind
             value: task
       workspaces:
