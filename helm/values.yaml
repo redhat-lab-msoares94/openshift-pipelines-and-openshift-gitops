@@ -21,17 +21,17 @@ pipeMoveImage:
   - projectToName: apps-hml
     projectFromName: apps-dev
     pipeName: quarkus-api-consulta-cep-move
-    appManifestGit: 'redhat-lab-msoares94/openshift-pipelines-and-openshift-gitops/source-demo/quarkus-api-consulta-cep-gitops'
+    appManifestGit: 'redhat-lab-msoares94/openshift-pipelines-and-openshift-gitops-source-demo-gitops'
     appManifestGitBranch: 'hml'
-    appManifestPath: '.'
+    appManifestPath: 'quarkus-api-consulta-cep-gitops'
     gitHashCommit: '1.0.0'
     gitHost: 'github.com'
 
   - projectToName: apps-prd
     projectFromName: apps-hml
     pipeName: quarkus-api-consulta-cep-move
-    appManifestGit: 'redhat-lab-msoares94/openshift-pipelines-and-openshift-gitops/source-demo/quarkus-api-consulta-cep-gitops'
+    appManifestGit: 'redhat-lab-msoares94/openshift-pipelines-and-openshift-gitops-source-demo-gitops'
     appManifestGitBranch: 'prd'
-    appManifestPath: '.'
+    appManifestPath: 'quarkus-api-consulta-cep-gitops'
     gitHashCommit: '1.0.0'
     gitHost: 'github.com'
