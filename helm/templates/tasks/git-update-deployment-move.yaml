@@ -67,11 +67,16 @@ spec:
         sed -i "s/$LI/$(params.GIT_HASH_COMMIT)/g" $DEPLOY_FILE
 
         git add .
-        git commit -m "[$(context.taskRun.name)] Image tag updated"
 
-        REPOSITORY=$(echo "$(params.GIT_PROTOCOL)://$(params.GIT_HOST)/$(params.GIT_PATH)" | sed -E "s#https://(.*)#https://$GIT_USER:$GIT_TOKEN@\1#g")
-        git remote add auth-origin $REPOSITORY
-        git -c http.sslVerify=false push auth-origin $(params.SOURCE_BRANCH)
+        if git diff-index --quiet HEAD; then
+          echo "No changes to commit. Skipping commit and push."
+        else
+          echo "Committing and pushing changes"
+          git commit -m "[$(context.taskRun.name)] Image tag updated"
+          REPOSITORY=$(echo "$(params.GIT_PROTOCOL)://$(params.GIT_HOST)/$(params.GIT_PATH)" | sed -E "s#https://(.*)#https://$GIT_USER:$GIT_TOKEN@\1#g")
+          git remote add auth-origin $REPOSITORY
+          git -c http.sslVerify=false push auth-origin $(params.SOURCE_BRANCH)
+        fi
 
         echo -n $(grep -i "  deploymentName:" $DEPLOY_FILE |head -n1|awk -F":" '{print $2}') > $(results.app_name.path)
 

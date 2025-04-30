@@ -96,7 +96,7 @@ spec:
             value: task
       workspaces:
       - name: images_url
-        workspace: workspace          
+        workspace: workspace
   workspaces:
     - name: workspace
 {{ end }}
