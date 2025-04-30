@@ -87,6 +87,8 @@ spec:
           git -c http.sslVerify=false push auth-origin $(params.SOURCE_BRANCH)
         fi
 
+        #echo -n $(grep -i "  deploymentName:" $DEPLOY_FILE |head -n1|awk -F":" '{print $2}') > $(results.app_name.path)
+
       workingDir: $(workspaces.workspace.path)
       
   workspaces:
