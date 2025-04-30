@@ -22,9 +22,6 @@ spec:
     - name: CENTRAL_HOST
       description: StackRox Central endpoint (host:port)
       type: string
-    - name: API_TOKEN
-      description: StackRox API token
-      type: string
     - name: INSECURE
       description: Skip TLS verify (true/false)
       type: string
