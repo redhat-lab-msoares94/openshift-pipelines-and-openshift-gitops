@@ -5,6 +5,11 @@ enableTektonClusterTaskCreator: true
 argocdNamespace: openshift-gitops
 argocdServiceAccountName: openshift-gitops-argocd-application-controller
 
+externalRegistry:
+  enabled: true
+  host: quay.apps.cluster-sj5vt.sj5vt.sandbox1671.opentlc.com
+  protocol: docker
+
 pipelinesv2:
   - projectOcName: apps-dev
     pipeName: quarkus-api-consulta-cep
