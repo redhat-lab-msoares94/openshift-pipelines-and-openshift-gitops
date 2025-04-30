@@ -1,9 +1,0 @@
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: pipeline
-  namespace: pipeline-tekton
-secrets:
-  - name: quay-secret
-imagePullSecrets:
-  - name: quay-secret
